@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { api } from '../../../utils/api';
+ import api from '../../utils/api';
 import { FaStar, FaBuilding, FaMapMarkerAlt, FaLink, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 export default function CompanyProfile() {
