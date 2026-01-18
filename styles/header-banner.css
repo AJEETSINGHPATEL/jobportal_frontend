@@ -1,0 +1,500 @@
+/* Global CSS for Header Banner - Fallback Styles */
+.header-banner-global {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  color: #333 !important;
+  overflow: hidden !important;
+}
+
+/* Background Elements */
+.banner-background-global {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1 !important;
+}
+
+.background-image-global {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+.overlay-gradient-global {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(
+    135deg, 
+    rgba(237, 242, 251, 0.4) 0%, 
+    rgba(219, 234, 254, 0.4) 100%
+  ) !important;
+}
+
+.fallback-gradient {
+  background: linear-gradient(
+    135deg, 
+    rgba(102, 126, 234, 0.95) 0%, 
+    rgba(118, 75, 162, 0.95) 100%
+  ) !important;
+}
+
+
+
+/* Top Navigation */
+.top-nav-global {
+  position: relative !important;
+  z-index: 100 !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  backdrop-filter: blur(30px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+.nav-container-global {
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  padding: 0 2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 80px !important;
+}
+
+.nav-logo-global .logo-link-global {
+  text-decoration: none !important;
+}
+
+.logo-wrapper-global {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+.logo-icon-global {
+  font-size: 2rem !important;
+  color: #2563eb !important;
+}
+
+.logo-text-global {
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  color: #2563eb !important;
+  letter-spacing: -0.5px !important;
+}
+
+.nav-menu-global {
+  display: flex !important;
+  list-style: none !important;
+  gap: 2rem !important;
+}
+
+.nav-link-global {
+  color: rgba(37, 99, 235, 0.9) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  font-size: 1.1rem !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.nav-link-global:hover {
+  color: #1e40af !important;
+  background: rgba(237, 242, 251, 0.5) !important;
+}
+
+.nav-auth-global {
+  display: flex !important;
+  gap: 1rem !important;
+}
+
+.btn-global {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
+}
+
+.btn-primary-global {
+  background: linear-gradient(45deg, #2563eb, #3b82f6) !important;
+  color: white !important;
+}
+
+.btn-primary-global:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3) !important;
+}
+
+.btn-outline-global {
+  background: transparent !important;
+  color: #2563eb !important;
+  border: 2px solid rgba(37, 99, 235, 0.5) !important;
+}
+
+.btn-outline-global:hover {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border-color: #2563eb !important;
+}
+
+.mobile-toggle-global {
+  display: none !important;
+  background: transparent !important;
+  border: none !important;
+  color: #333 !important;
+  font-size: 1.5rem !important;
+  cursor: pointer !important;
+}
+
+/* Hero Section */
+.hero-section-global {
+  position: relative !important;
+  padding: 4rem 2rem !important;
+  min-height: calc(100vh - 80px) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.hero-container-global {
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 4rem !important;
+  align-items: center !important;
+}
+
+.hero-content-global {
+  z-index: 10 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(35px) !important;
+  border-radius: 20px !important;
+  padding: 2rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+.hero-badge-global {
+  margin-bottom: 2rem !important;
+}
+
+.badge-text-global {
+  display: inline-block !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  padding: 0.5rem 1.5rem !important;
+  border-radius: 50px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.hero-title-global {
+  font-size: 3.5rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.2 !important;
+  color: #1e3a8a !important;
+}
+
+.title-highlight-global {
+  display: block !important;
+  background: linear-gradient(45deg, #2563eb, #3b82f6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.hero-subtitle-global {
+  font-size: 1.2rem !important;
+  margin-bottom: 2.5rem !important;
+  line-height: 1.6 !important;
+  opacity: 0.9 !important;
+  max-width: 600px !important;
+  color: #1e3a8a !important;
+}
+
+.hero-search-global {
+  margin-bottom: 3rem !important;
+}
+
+.search-container-global {
+  display: flex !important;
+  gap: 1rem !important;
+  background: white !important;
+  border-radius: 50px !important;
+  padding: 0.5rem !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.search-input-global {
+  flex: 1 !important;
+  padding: 1rem 1.5rem !important;
+  border: none !important;
+  border-radius: 50px !important;
+  font-size: 1rem !important;
+  outline: none !important;
+}
+
+.search-input-global::placeholder {
+  color: #999 !important;
+}
+
+.search-button-global {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 1rem 2rem !important;
+  background: linear-gradient(45deg, #2563eb, #3b82f6) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.search-button-global:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.hero-stats-global {
+  display: flex !important;
+  gap: 3rem !important;
+}
+
+.stat-item-global {
+  text-align: center !important;
+}
+
+.stat-number-global {
+  font-size: 2rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 0.25rem !important;
+  color: #2563eb !important;
+}
+
+.stat-label-global {
+  font-size: 0.9rem !important;
+  opacity: 0.8 !important;
+  text-transform: uppercase !important;
+  color: #2563eb !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Featured Jobs */
+.hero-featured-global {
+  z-index: 10 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(35px) !important;
+  border-radius: 20px !important;
+  padding: 2rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+.featured-header-global {
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.featured-header-global h2 {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.featured-header-global p {
+  opacity: 0.8 !important;
+  margin: 0 !important;
+}
+
+.featured-cards-global {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+}
+
+.featured-card-global {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 16px !important;
+  padding: 1.5rem !important;
+  color: #333 !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.featured-card-global:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header-global {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 1rem !important;
+}
+
+.company-avatar-global {
+  width: 40px !important;
+  height: 40px !important;
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #333 !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+}
+
+.job-type-global {
+  background: #e0e7ff !important;
+  color: #4f46e5 !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 20px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+}
+
+.job-type-global.contract {
+  background: #fef3c7 !important;
+  color: #d97706 !important;
+}
+
+.job-type-global.remote {
+  background: #dcfce7 !important;
+  color: #16a34a !important;
+}
+
+.featured-card-global h3 {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 0.5rem 0 !important;
+  color: #1f2937 !important;
+}
+
+.company-name-global {
+  color: #6b7280 !important;
+  margin: 0 0 1rem 0 !important;
+  font-size: 0.95rem !important;
+}
+
+.job-details-global {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 0.9rem !important;
+  color: #4b5563 !important;
+}
+
+.salary-global {
+  font-weight: 700 !important;
+  color: #059669 !important;
+}
+
+
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .hero-container-global {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+    text-align: center !important;
+  }
+  
+  .hero-title-global {
+    font-size: 2.8rem !important;
+  }
+  
+  .search-container-global {
+    flex-direction: column !important;
+  }
+  
+  .hero-stats-global {
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-container-global {
+    padding: 0 1rem !important;
+  }
+  
+  .nav-menu-global {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: rgba(102, 126, 234, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    flex-direction: column !important;
+    padding: 2rem !important;
+    gap: 1rem !important;
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0) !important;
+    transition: clip-path 0.3s ease !important;
+  }
+  
+  .nav-menu-global.mobile-open {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%) !important;
+  }
+  
+  .mobile-toggle-global {
+    display: block !important;
+  }
+  
+  .nav-auth-global {
+    display: none !important;
+  }
+  
+  .hero-title-global {
+    font-size: 2.2rem !important;
+  }
+  
+  .hero-stats-global {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+  
+  .featured-cards-global {
+    align-items: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title-global {
+    font-size: 1.8rem !important;
+  }
+  
+  .search-container-global {
+    padding: 0.25rem !important;
+  }
+  
+  .search-input-global {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .search-button-global {
+    padding: 0.75rem 1.5rem !important;
+  }
+}
