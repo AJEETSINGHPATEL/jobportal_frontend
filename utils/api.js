@@ -500,7 +500,7 @@ class ApiClient {
     });
     return response || { questions: [] };
   }
-
+  
   async generateInterviewQuestionsFromFile(jobDescription, file) {
     const formData = new FormData();
     formData.append('file', file);
@@ -545,3 +545,5 @@ class ApiClient {
 
 // Export singleton instance
 export const api = new ApiClient();
+
+export default api
