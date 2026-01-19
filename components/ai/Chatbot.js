@@ -102,11 +102,25 @@ export default function Chatbot() {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
+            // First, test if the backend is reachable by checking a basic endpoint
+            const testResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/jobs/`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                signal: controller.signal
+            });
+            
+            if (!testResponse.ok) {
+                throw new Error('Backend server is not accessible');
+            }
+            
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/ai/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add any additional headers if needed
+                    'X-Requested-With': 'XMLHttpRequest',
+                    // Don't send authorization headers to avoid CORS issues with AI endpoint
                 },
                 body: JSON.stringify({
                     message: userMessage.content,
@@ -170,6 +184,11 @@ export default function Chatbot() {
                 errorMessage = "Unable to connect to the AI service. Please check your internet connection and try again.";
             } else if (error.message.includes('429')) {
                 errorMessage = "Too many requests. Please wait a moment before trying again.";
+            } else if (error.message.includes('Backend server is not accessible')) {
+                errorMessage = "The AI service is temporarily unavailable. Our team is working to resolve this issue.";
+            } else if (error.message.includes('404') || error.message.includes('500')) {
+                // If the AI endpoint doesn't exist, provide a helpful response
+                errorMessage = "I'm sorry, but the AI chat service is currently not available. However, I can guide you on how to find jobs, optimize your resume, or prepare for interviews. Feel free to ask any career-related questions!";
             }
             
             setMessages(prev => [...prev, {
