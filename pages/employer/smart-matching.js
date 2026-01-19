@@ -79,6 +79,8 @@ export default function SmartMatchingPage() {
       <Head>
         <title>Smart Candidate Matching | CareerHub</title>
         <meta name="description" content="AI-powered candidate matching for employers" />
+        <link rel="icon" href="/images/icon.jpg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/images/icon.jpg" />
       </Head>
 
       {/* Header Section */}

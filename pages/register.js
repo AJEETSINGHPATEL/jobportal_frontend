@@ -98,7 +98,7 @@ export default function Register() {
         }
         setError(errorMessage);
       } else if (err.request) {
-        setError('Network error. Please check if the backend server is running on port 8002.');
+        setError('Network error. Unable to connect to the job portal service. Please check your internet connection and try again.');
       } else {
         setError(`Registration failed: ${err.message || 'Please try again.'}`);
       }

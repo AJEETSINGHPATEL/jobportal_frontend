@@ -368,7 +368,7 @@ export default function Dashboard() {
                 }}>
                   {profile?.profilePicture ? (
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}${profile.profilePicture}`}
+                      src={`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}${profile.profilePicture}`}
                       alt="Profile"
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={(e) => {
@@ -785,7 +785,7 @@ export default function Dashboard() {
                 }}>
                   {authUser?.profilePicture ? (
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}${authUser.profilePicture}`}
+                      src={`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}${authUser.profilePicture}`}
                       alt="Profile"
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={(e) => {

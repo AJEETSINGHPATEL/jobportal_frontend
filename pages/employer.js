@@ -8,6 +8,8 @@ export default function EmployerPage() {
       <Head>
         <title>For Employers | CareerHub</title>
         <meta name="description" content="Leverage AI to find and hire the best talent" />
+        <link rel="icon" href="/images/icon.jpg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/images/icon.jpg" />
       </Head>
 
       {/* Header Section */}

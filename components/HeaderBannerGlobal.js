@@ -30,7 +30,7 @@ export default function HeaderBannerGlobal() {
           <div className="nav-logo-global">
             <Link href="/" className="logo-link-global">
               <div className="logo-wrapper-global">
-                <FaBriefcase className="logo-icon-global" />
+                <img src="/images/icon.jpg" alt="CareerHub Logo" className="logo-icon-global" />
                 <span className="logo-text-global">CareerHub</span>
               </div>
             </Link>

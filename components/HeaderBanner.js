@@ -30,7 +30,7 @@ export default function HeaderBanner() {
           <div className="nav-logo">
             <Link href="/" className="logo-link">
               <div className="logo-wrapper">
-                <FaBriefcase className="logo-icon" />
+                <img src="/images/icon.jpg" alt="CareerHub Logo" className="logo-icon" />
                 <span className="logo-text">CareerHub</span>
               </div>
             </Link>
@@ -207,8 +207,9 @@ export default function HeaderBanner() {
         }
 
         .logo-icon {
-          font-size: 2rem;
-          color: #2563eb;
+          width: 40px;
+          height: 40px;
+          object-fit: contain;
         }
 
         .logo-text {
@@ -629,4 +630,5 @@ export default function HeaderBanner() {
       `}</style>
     </header>
   );
+} );
 }

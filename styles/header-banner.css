@@ -1,4 +1,5 @@
 /* Global CSS for Header Banner - Fallback Styles */
+
 .header-banner-global {
   position: relative !important;
   width: 100% !important;
@@ -61,7 +62,7 @@
 .nav-container-global {
   max-width: 1400px !important;
   margin: 0 auto !important;
-  padding: 0 2rem !important;
+  padding: 0 1rem !important; /* Reduced from 2rem to 1rem to fix right spacing */
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -79,8 +80,9 @@
 }
 
 .logo-icon-global {
-  font-size: 2rem !important;
-  color: #2563eb !important;
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: contain !important;
 }
 
 .logo-text-global {
@@ -170,7 +172,8 @@
 }
 
 .hero-container-global {
-  max-width: 1400px !important;
+  /* max-width: 1400px !important; */
+  max-width: fit-content;
   margin: 0 auto !important;
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;

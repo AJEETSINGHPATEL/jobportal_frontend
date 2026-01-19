@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com';
 
 class ApiClient {
   constructor() {
@@ -45,7 +45,17 @@ class ApiClient {
     };
 
     try {
-      const response = await fetch(url, config);
+      // Add timeout for connection health check
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      const response = await fetch(url, {
+        ...config,
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
         // Parse error response to get detailed error message
         let errorData = {};
@@ -103,11 +113,28 @@ class ApiClient {
       return await response.json();
     } catch (error) {
       console.error(`API request failed: ${error.message}`);
-      // If it's a network error (e.g., backend not running), provide a more helpful message
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error('Network error. Please check if the backend server is running on port 8002.');
+      
+      // Enhanced error categorization
+      let errorMessage = 'An unexpected error occurred. Please try again.';
+      
+      if (error.name === 'AbortError') {
+        errorMessage = 'Request timeout. The server is taking too long to respond. Please check your internet connection.';
+      } else if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = 'Network error. Unable to connect to the job portal service. Please check your internet connection and try again.';
+      } else if (error.message.includes('Failed to fetch')) {
+        errorMessage = 'Connection failed. Please verify your internet connection and try again.';
+      } else {
+        errorMessage = error.message || errorMessage;
       }
-      throw error;
+      
+      // Create enhanced error object with more context
+      const enhancedError = new Error(errorMessage);
+      enhancedError.originalError = error;
+      enhancedError.timestamp = new Date().toISOString();
+      enhancedError.endpoint = endpoint;
+      enhancedError.baseUrl = this.baseUrl;
+      
+      throw enhancedError;
     }
   }
 
@@ -540,6 +567,55 @@ class ApiClient {
   
   async getEmployerActivity() {
     return this.request('/api/employer/activity');
+  }
+  
+  // Connection health check method
+  async checkConnection() {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout for health check
+      
+      // Try multiple endpoints to check connection
+      const endpoints = [
+        `${this.baseUrl}/api/jobs/`,
+        `${this.baseUrl}/api/auth/login`
+      ];
+      
+      let connected = false;
+      let status = 0;
+      
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: 'OPTIONS', // Use OPTIONS to avoid authentication issues
+            signal: controller.signal
+          });
+          
+          if (response.status < 500) { // Any status except 5xx means server is reachable
+            connected = true;
+            status = response.status;
+            break;
+          }
+        } catch (err) {
+          // Continue to next endpoint
+          continue;
+        }
+      }
+      
+      clearTimeout(timeoutId);
+      
+      return {
+        connected: connected,
+        status: status,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        connected: false,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 }
 

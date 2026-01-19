@@ -98,7 +98,7 @@ export default function Chatbot() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}/api/ai/chat`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/ai/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

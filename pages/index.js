@@ -10,7 +10,8 @@ export default function Home() {
       <Head>
         <title>AI Job Portal</title>
         <meta name="description" content="Find your dream job with AI-powered assistance" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/images/icon.jpg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/images/icon.jpg" />
       </Head>
 
       {/* Global CSS Header Banner */}
@@ -163,6 +164,7 @@ export default function Home() {
         .container {
           min-height: 100vh;
           padding: 0;
+          max-width: fit-content;
           display: flex;
           flex-direction: column;
         }
