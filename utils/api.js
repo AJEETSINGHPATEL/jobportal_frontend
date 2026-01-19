@@ -573,42 +573,47 @@ class ApiClient {
   async checkConnection() {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout for health check
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout for health check
       
-      // Try multiple endpoints to check connection
-      const endpoints = [
-        `${this.baseUrl}/api/jobs/`,
-        `${this.baseUrl}/api/auth/login`
-      ];
+      // Simple fetch to the jobs API endpoint to test connectivity
+      // Use a minimal endpoint that should always be available
+      const testEndpoint = `${this.baseUrl}/api/jobs/`;
       
-      let connected = false;
-      let status = 0;
-      
-      for (const endpoint of endpoints) {
-        try {
-          const response = await fetch(endpoint, {
-            method: 'OPTIONS', // Use OPTIONS to avoid authentication issues
-            signal: controller.signal
-          });
-          
-          if (response.status < 500) { // Any status except 5xx means server is reachable
-            connected = true;
-            status = response.status;
-            break;
-          }
-        } catch (err) {
-          // Continue to next endpoint
-          continue;
-        }
+      try {
+        // Make a GET request with minimal impact
+        const response = await fetch(testEndpoint, {
+          method: 'GET',
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache',
+            'X-Requested-With': 'HealthCheck'  // Custom header to identify health check requests
+          },
+          // Don't include credentials to avoid CORS issues
+        });
+        
+        // If we receive any response (even error responses like 401, 404),
+        // it means the server is reachable. Only network errors or 5xx errors
+        // indicate actual connection problems.
+        clearTimeout(timeoutId);
+        
+        const isConnected = response.status < 500;
+        
+        return {
+          connected: isConnected,
+          status: response.status,
+          timestamp: new Date().toISOString()
+        };
+      } catch (error) {
+        // Network error (failed to fetch, timeout, DNS failure, etc.)
+        clearTimeout(timeoutId);
+        
+        return {
+          connected: false,
+          error: error.message,
+          timestamp: new Date().toISOString()
+        };
       }
-      
-      clearTimeout(timeoutId);
-      
-      return {
-        connected: connected,
-        status: status,
-        timestamp: new Date().toISOString()
-      };
     } catch (error) {
       return {
         connected: false,

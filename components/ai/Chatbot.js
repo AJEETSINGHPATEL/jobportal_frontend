@@ -98,10 +98,15 @@ export default function Chatbot() {
         setIsLoading(true);
 
         try {
+            // Create abort controller for timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/ai/chat`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    // Add any additional headers if needed
                 },
                 body: JSON.stringify({
                     message: userMessage.content,
@@ -109,24 +114,67 @@ export default function Chatbot() {
                         role: msg.role,
                         content: msg.content
                     }))
-                })
+                }),
+                signal: controller.signal
             });
 
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
-                throw new Error('Failed to get response');
+                // Try to get error details from response
+                let errorMessage = 'Failed to get response';
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.detail || errorData.message || errorMessage;
+                } catch (e) {
+                    // If we can't parse the error, use status text
+                    errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
             }
 
             const data = await response.json();
+            
+            // Handle different possible response formats
+            let assistantResponse = '';
+            if (data && typeof data === 'object') {
+                if (data.response) {
+                    assistantResponse = data.response;
+                } else if (data.message) {
+                    assistantResponse = data.message;
+                } else if (data.answer) {
+                    assistantResponse = data.answer;
+                } else {
+                    // If the entire response is meant to be the message
+                    assistantResponse = JSON.stringify(data);
+                }
+            } else {
+                // If the response is a string directly
+                assistantResponse = data || 'No response received';
+            }
+            
             setMessages(prev => [...prev, { 
                 role: 'assistant', 
-                content: data.response,
+                content: assistantResponse,
                 timestamp: new Date()
             }]);
         } catch (error) {
             console.error('Chat error:', error);
+            
+            // Check for specific error types and provide appropriate messages
+            let errorMessage = "I apologize, but I'm having trouble connecting right now. Please try again later.";
+            
+            if (error.name === 'AbortError') {
+                errorMessage = "The request timed out. The server took too long to respond. Please try again.";
+            } else if (error.message.includes('Network Error') || error.message.includes('Failed to fetch')) {
+                errorMessage = "Unable to connect to the AI service. Please check your internet connection and try again.";
+            } else if (error.message.includes('429')) {
+                errorMessage = "Too many requests. Please wait a moment before trying again.";
+            }
+            
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: "I apologize, but I'm having trouble connecting right now. Please try again later.",
+                content: errorMessage,
                 timestamp: new Date()
             }]);
         } finally {
