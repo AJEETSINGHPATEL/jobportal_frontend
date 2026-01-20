@@ -1,9 +1,11 @@
 // Support both Next.js and Vite environment variables
+// Note: For Vite builds, set VITE_API_URL in .env file
+// For Next.js builds, set NEXT_PUBLIC_API_URL in .env file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 
-                     (typeof import !== 'undefined' && import.meta && import.meta.env && import.meta.env.VITE_API_URL) || 
+                     process.env.VITE_API_URL || 
                      'https://jobportal-backend-2-i07w.onrender.com';
 
-// For Vite environment variable usage example:
+// Vite environment variable usage example (for Vite-only builds):
 // const API_URL = import.meta.env.VITE_API_URL;
 // fetch(`${API_URL}/api/search`)
 //   .then(res => res.json())
@@ -737,4 +739,4 @@ class ApiClient {
 // Export singleton instance
 export const api = new ApiClient();
 
-export default api
+export default api;
