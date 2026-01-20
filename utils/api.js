@@ -566,14 +566,18 @@ class ApiClient {
         throw new Error('Not running in browser environment');
       }
       
+      // For production environments, we may need to handle longer cold starts
+      const timeoutMs = process.env.NODE_ENV === 'production' ? 60000 : 30000; // 60 seconds for prod, 30 for dev
+      
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout for AI requests
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
       const response = await fetch(`${this.baseUrl}/api/ai/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify({
           message: message,
@@ -585,12 +589,25 @@ class ApiClient {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to get error details from response
+        let errorDetails = `HTTP error! status: ${response.status}`;
+        try {
+          const errorResponse = await response.json();
+          errorDetails += `, details: ${JSON.stringify(errorResponse)}`;
+        } catch (parseError) {
+          // If we can't parse the error response, use the status text
+          errorDetails += `, statusText: ${response.statusText}`;
+        }
+        throw new Error(errorDetails);
       }
       
       return await response.json();
     } catch (error) {
       console.error('AI Chat endpoint test failed:', error);
+      // Re-throw the error with additional context
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout: The server took too long to respond. This may be due to a cold start on the free tier backend.');
+      }
       throw error;
     }
   }
@@ -624,50 +641,35 @@ class ApiClient {
         };
       }
       
+      // Use longer timeout for production environments due to cold starts
+      const timeoutMs = process.env.NODE_ENV === 'production' ? 30000 : 15000;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout for health check (allowing for Render free tier cold starts)
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs); // Timeout for health check
       
       // Test the AI chat endpoint specifically to verify backend is accessible
+      // We'll make a simple POST request to test the endpoint
       const testEndpoint = `${this.baseUrl}/api/ai/chat`;
       
       try {
-        // Make an OPTIONS request to check if the endpoint is available
+        // Make a minimal POST request to check if the endpoint is available
         const response = await fetch(testEndpoint, {
-          method: 'OPTIONS',
+          method: 'POST',
           signal: controller.signal,
           headers: {
+            'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Cache-Control': 'no-cache',
             'X-Requested-With': 'HealthCheck'  // Custom header to identify health check requests
           },
-          // Don't include credentials to avoid CORS issues
+          body: JSON.stringify({
+            message: 'health check',
+            history: []
+          })
         });
         
         // If we receive any response (even error responses like 401, 404),
         // it means the server is reachable. Only network errors or 5xx errors
         // indicate actual connection problems.
         clearTimeout(timeoutId);
-        
-        // If the OPTIONS request fails, try a GET request to a basic endpoint
-        if (!response.ok && response.status >= 400) {
-          const fallbackEndpoint = `${this.baseUrl}/api/jobs/`;
-          const fallbackResponse = await fetch(fallbackEndpoint, {
-            method: 'GET',
-            signal: controller.signal,
-            headers: {
-              'Accept': 'application/json',
-              'Cache-Control': 'no-cache',
-              'X-Requested-With': 'HealthCheck'
-            }
-          });
-          
-          return {
-            connected: fallbackResponse.status < 500,
-            status: fallbackResponse.status,
-            timestamp: new Date().toISOString(),
-            endpoint: 'fallback'
-          };
-        }
         
         const isConnected = response.status < 500;
         
@@ -684,14 +686,19 @@ class ApiClient {
         // If the primary endpoint fails, try a fallback
         try {
           const fallbackEndpoint = `${this.baseUrl}/api/jobs/`;
+          const timeoutId2 = setTimeout(() => controller.abort(), timeoutMs);
+          
           const fallbackResponse = await fetch(fallbackEndpoint, {
             method: 'GET',
+            signal: controller.signal,
             headers: {
               'Accept': 'application/json',
               'Cache-Control': 'no-cache',
               'X-Requested-With': 'HealthCheck'
             }
           });
+          
+          clearTimeout(timeoutId2);
           
           return {
             connected: fallbackResponse.status < 500,
