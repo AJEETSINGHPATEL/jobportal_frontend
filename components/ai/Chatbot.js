@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { FaRobot, FaPaperPlane, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { api } from '../../utils/api';
 
 export default function Chatbot() {
     const router = useRouter();
@@ -82,6 +83,27 @@ export default function Chatbot() {
         setShowQuickButtons(false);
     };
 
+    // Simulate AI response when backend is not available
+    const simulateAIResponse = (userInput) => {
+        const lowerInput = userInput.toLowerCase();
+        
+        if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
+            return "Hello! I'm your AI assistant. I'm currently working offline, but I'm here to help with career guidance. How can I assist you today?";
+        } else if (lowerInput.includes('job') || lowerInput.includes('career') || lowerInput.includes('work')) {
+            return "I'd be happy to help with job and career advice! Consider researching companies in your field, optimizing your resume with relevant keywords, and practicing common interview questions. Would you like specific advice on any of these topics?";
+        } else if (lowerInput.includes('resume') || lowerInput.includes('cv')) {
+            return "For resume optimization, make sure to include relevant keywords from job postings, quantify your achievements with numbers, and tailor your resume for each application. Keep it clean and professional, ideally one page for early-career professionals.";
+        } else if (lowerInput.includes('interview') || lowerInput.includes('interviewing')) {
+            return "For interview preparation, research the company and role thoroughly, practice common questions like 'Tell me about yourself' and 'Why do you want to work here?', and prepare thoughtful questions to ask the interviewer. Remember to dress professionally and arrive early!";
+        } else if (lowerInput.includes('thank') || lowerInput.includes('thanks')) {
+            return "You're welcome! I'm glad I could help. If you have any more questions about careers, job searching, or professional development, feel free to ask!";
+        } else if (lowerInput.includes('bye') || lowerInput.includes('goodbye')) {
+            return "Goodbye! Best of luck with your career journey. Remember, persistence and continuous learning are key to success in today's job market!";
+        } else {
+            return "Thank you for your message. While my AI backend is currently unavailable, I can offer general career advice: Focus on continuous learning, networking within your industry, and developing both technical and soft skills. Tailor your applications to each role and don't get discouraged by rejections - they're part of the process!";
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!input.trim() || isLoading) return;
@@ -98,56 +120,8 @@ export default function Chatbot() {
         setIsLoading(true);
 
         try {
-            // Create abort controller for timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-            // First, test if the backend is reachable by checking a basic endpoint
-            const testResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/jobs/`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-                signal: controller.signal
-            });
-            
-            if (!testResponse.ok) {
-                throw new Error('Backend server is not accessible');
-            }
-            
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/ai/chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    // Don't send authorization headers to avoid CORS issues with AI endpoint
-                },
-                body: JSON.stringify({
-                    message: userMessage.content,
-                    history: messages.filter(msg => msg.role === 'user' || msg.role === 'assistant').map(msg => ({
-                        role: msg.role,
-                        content: msg.content
-                    }))
-                }),
-                signal: controller.signal
-            });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                // Try to get error details from response
-                let errorMessage = 'Failed to get response';
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.detail || errorData.message || errorMessage;
-                } catch (e) {
-                    // If we can't parse the error, use status text
-                    errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-                }
-                throw new Error(errorMessage);
-            }
-
-            const data = await response.json();
+            // Use the API client to test the AI chat endpoint
+            const data = await api.testAIChatEndpoint(userMessage.content);
             
             // Handle different possible response formats
             let assistantResponse = '';
@@ -184,10 +158,13 @@ export default function Chatbot() {
                 errorMessage = "Unable to connect to the AI service. Please check your internet connection and try again.";
             } else if (error.message.includes('429')) {
                 errorMessage = "Too many requests. Please wait a moment before trying again.";
-            } else if (error.message.includes('Backend server is not accessible')) {
-                errorMessage = "The AI service is temporarily unavailable. Our team is working to resolve this issue.";
+            } else if (error.message.includes('Backend server is not accessible') || error.message.includes('AI endpoint not available')) {
+                // Provide a simulated response when backend is not available
+                errorMessage = simulateAIResponse(userMessage.content);
             } else if (error.message.includes('404') || error.message.includes('500')) {
-                // If the AI endpoint doesn't exist, provide a helpful response
+                // Provide a simulated response when backend is not available
+                errorMessage = simulateAIResponse(userMessage.content);
+            } else {
                 errorMessage = "I'm sorry, but the AI chat service is currently not available. However, I can guide you on how to find jobs, optimize your resume, or prepare for interviews. Feel free to ask any career-related questions!";
             }
             

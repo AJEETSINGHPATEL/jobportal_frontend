@@ -17,6 +17,9 @@ export default function HeaderBanner() {
           src="/images/Gemini_Generated_Image_xz7dhrxz7dhrxz7d.png" 
           alt="Career Background" 
           className="background-image"
+          onError={(e) => {
+            e.target.style.display = 'none';
+          }}
         />
         <div className="overlay-gradient"></div>
       </div>
@@ -630,5 +633,4 @@ export default function HeaderBanner() {
       `}</style>
     </header>
   );
-} );
 }

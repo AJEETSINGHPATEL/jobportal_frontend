@@ -45,9 +45,15 @@ class ApiClient {
     };
 
     try {
+      // Determine timeout based on endpoint type
+      let timeoutMs = 15000; // 15 second default timeout
+      if (endpoint.includes('/api/ai/')) {
+        timeoutMs = 120000; // 2 minute timeout for AI requests
+      }
+      
       // Add timeout for connection health check
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
       const response = await fetch(url, {
         ...config,
@@ -552,6 +558,43 @@ class ApiClient {
     return response || { answer: 'No answer generated' };
   }
   
+  // Test AI chat endpoint specifically
+  async testAIChatEndpoint(message = 'Hello') {
+    try {
+      // Check if we're in a browser environment
+      if (typeof window === 'undefined' || !window.fetch) {
+        throw new Error('Not running in browser environment');
+      }
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout for AI requests
+      
+      const response = await fetch(`${this.baseUrl}/api/ai/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message,
+          history: [{role: 'user', content: message}]
+        }),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('AI Chat endpoint test failed:', error);
+      throw error;
+    }
+  }
+  
   // Employer dashboard endpoints
   async getEmployerDashboardStats() {
     return this.request('/api/employer/dashboard/stats');
@@ -572,17 +615,25 @@ class ApiClient {
   // Connection health check method
   async checkConnection() {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout for health check
+      // Check if we're in a browser environment
+      if (typeof window === 'undefined' || !window.fetch) {
+        return {
+          connected: false,
+          error: 'Not running in browser environment',
+          timestamp: new Date().toISOString()
+        };
+      }
       
-      // Simple fetch to the jobs API endpoint to test connectivity
-      // Use a minimal endpoint that should always be available
-      const testEndpoint = `${this.baseUrl}/api/jobs/`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout for health check (allowing for Render free tier cold starts)
+      
+      // Test the AI chat endpoint specifically to verify backend is accessible
+      const testEndpoint = `${this.baseUrl}/api/ai/chat`;
       
       try {
-        // Make a GET request with minimal impact
+        // Make an OPTIONS request to check if the endpoint is available
         const response = await fetch(testEndpoint, {
-          method: 'GET',
+          method: 'OPTIONS',
           signal: controller.signal,
           headers: {
             'Accept': 'application/json',
@@ -597,22 +648,65 @@ class ApiClient {
         // indicate actual connection problems.
         clearTimeout(timeoutId);
         
+        // If the OPTIONS request fails, try a GET request to a basic endpoint
+        if (!response.ok && response.status >= 400) {
+          const fallbackEndpoint = `${this.baseUrl}/api/jobs/`;
+          const fallbackResponse = await fetch(fallbackEndpoint, {
+            method: 'GET',
+            signal: controller.signal,
+            headers: {
+              'Accept': 'application/json',
+              'Cache-Control': 'no-cache',
+              'X-Requested-With': 'HealthCheck'
+            }
+          });
+          
+          return {
+            connected: fallbackResponse.status < 500,
+            status: fallbackResponse.status,
+            timestamp: new Date().toISOString(),
+            endpoint: 'fallback'
+          };
+        }
+        
         const isConnected = response.status < 500;
         
         return {
           connected: isConnected,
           status: response.status,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          endpoint: 'ai/chat'
         };
       } catch (error) {
         // Network error (failed to fetch, timeout, DNS failure, etc.)
         clearTimeout(timeoutId);
         
-        return {
-          connected: false,
-          error: error.message,
-          timestamp: new Date().toISOString()
-        };
+        // If the primary endpoint fails, try a fallback
+        try {
+          const fallbackEndpoint = `${this.baseUrl}/api/jobs/`;
+          const fallbackResponse = await fetch(fallbackEndpoint, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Cache-Control': 'no-cache',
+              'X-Requested-With': 'HealthCheck'
+            }
+          });
+          
+          return {
+            connected: fallbackResponse.status < 500,
+            status: fallbackResponse.status,
+            timestamp: new Date().toISOString(),
+            endpoint: 'fallback',
+            error: error.message
+          };
+        } catch (fallbackError) {
+          return {
+            connected: false,
+            error: error.message,
+            timestamp: new Date().toISOString()
+          };
+        }
       }
     } catch (error) {
       return {

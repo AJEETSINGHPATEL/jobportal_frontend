@@ -172,8 +172,7 @@
 }
 
 .hero-container-global {
-  /* max-width: 1400px !important; */
-  max-width: fit-content;
+  max-width: 1400px !important;
   margin: 0 auto !important;
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;

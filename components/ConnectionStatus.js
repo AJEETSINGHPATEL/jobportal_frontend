@@ -19,6 +19,7 @@ export default function ConnectionStatus() {
         error: status.error
       });
     } catch (error) {
+      console.error('Connection check failed:', error);
       setConnectionStatus({
         connected: false,
         checking: false,
@@ -38,26 +39,31 @@ export default function ConnectionStatus() {
     return () => clearInterval(interval);
   }, []);
 
-  if (connectionStatus.connected) {
-    return null; // Don't show anything when connected
-  }
+  // Show connection status indicator regardless of connection status
+  // This allows users to see the status and retry if needed
+  const statusClass = connectionStatus.connected ? 'connected' : 'disconnected';
 
   return (
-    <div className="connection-status-bar">
-      <div className="connection-warning">
-        <span className="warning-icon">⚠️</span>
-        <span className="warning-text">
+    <div className={`connection-status-bar ${statusClass}`}>
+      <div className="connection-info">
+        <span className="status-icon">
+          {connectionStatus.checking ? '🔄' : 
+           connectionStatus.connected ? '✅' : '⚠️'}
+        </span>
+        <span className="status-text">
           {connectionStatus.checking 
             ? 'Checking connection...' 
-            : 'Connection issues detected. Some features may not work properly.'
+            : connectionStatus.connected 
+              ? 'Connected to job portal service'
+              : 'Connection issues detected. Some features may not work properly.'
           }
         </span>
         <button 
           onClick={checkConnection}
           disabled={connectionStatus.checking}
-          className="retry-button"
+          className="refresh-button"
         >
-          {connectionStatus.checking ? 'Checking...' : 'Retry'}
+          {connectionStatus.checking ? 'Checking...' : 'Refresh'}
         </button>
       </div>
       
@@ -68,13 +74,22 @@ export default function ConnectionStatus() {
           left: 0;
           right: 0;
           z-index: 9999;
-          background: #fff3cd;
-          border-bottom: 1px solid #ffeaa7;
+          border-bottom: 1px solid;
           padding: 8px 16px;
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .connection-warning {
+        .connection-status-bar.connected {
+          background: #d4edda;
+          border-color: #c3e6cb;
+        }
+        
+        .connection-status-bar.disconnected {
+          background: #fff3cd;
+          border-color: #ffeaa7;
+        }
+        
+        .connection-info {
           display: flex;
           align-items: center;
           gap: 12px;
@@ -82,33 +97,49 @@ export default function ConnectionStatus() {
           margin: 0 auto;
         }
         
-        .warning-icon {
+        .status-icon {
           font-size: 18px;
         }
         
-        .warning-text {
+        .status-text {
           flex: 1;
-          color: #856404;
           font-size: 14px;
           font-weight: 500;
         }
         
-        .retry-button {
-          background: #856404;
-          color: white;
+        .connection-status-bar.connected .status-text {
+          color: #155724;
+        }
+        
+        .connection-status-bar.disconnected .status-text {
+          color: #856404;
+        }
+        
+        .refresh-button {
           border: none;
           padding: 6px 12px;
           border-radius: 4px;
           font-size: 12px;
           cursor: pointer;
-          transition: background 0.2s;
+          transition: all 0.2s;
         }
         
-        .retry-button:hover:not(:disabled) {
-          background: #6d5403;
+        .connection-status-bar.connected .refresh-button {
+          background: #28a745;
+          color: white;
         }
         
-        .retry-button:disabled {
+        .connection-status-bar.disconnected .refresh-button {
+          background: #856404;
+          color: white;
+        }
+        
+        .refresh-button:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: scale(1.05);
+        }
+        
+        .refresh-button:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
@@ -118,13 +149,13 @@ export default function ConnectionStatus() {
             padding: 6px 12px;
           }
           
-          .connection-warning {
+          .connection-info {
             flex-direction: column;
             gap: 8px;
             text-align: center;
           }
           
-          .warning-text {
+          .status-text {
             font-size: 13px;
           }
         }
