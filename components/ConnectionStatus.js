@@ -55,7 +55,7 @@ export default function ConnectionStatus() {
             ? 'Checking connection...' 
             : connectionStatus.connected 
               ? 'Connected to job portal service'
-              : 'Connection issues detected. Some features may not work properly.'
+              : 'Connection issues detected. Some features may not work properly. This may be due to the backend server being temporarily unavailable or cold start delays. Please try again later.'
           }
         </span>
         <button 

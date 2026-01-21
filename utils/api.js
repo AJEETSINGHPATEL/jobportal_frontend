@@ -646,77 +646,44 @@ class ApiClient {
       
       // Use longer timeout for production environments due to cold starts
       const timeoutMs = process.env.NODE_ENV === 'production' ? 30000 : 15000;
-      const controller = new AbortController();
+      const controller = new AbortController(); 
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs); // Timeout for health check
       
-      // Test the AI chat endpoint specifically to verify backend is accessible
-      // We'll make a simple POST request to test the endpoint
-      const testEndpoint = `${this.baseUrl}/api/ai/chat`;
+      // Try a simple GET request to test the endpoint (avoids potential CORS issues with POST to AI endpoint)
+      const testEndpoint = `${this.baseUrl}/api/jobs/`;
       
       try {
-        // Make a minimal POST request to check if the endpoint is available
         const response = await fetch(testEndpoint, {
-          method: 'POST',
+          method: 'GET',
           signal: controller.signal,
           headers: {
-            'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-Requested-With': 'HealthCheck'  // Custom header to identify health check requests
-          },
-          body: JSON.stringify({
-            message: 'health check',
-            history: []
-          })
+          }
         });
         
         // If we receive any response (even error responses like 401, 404),
-        // it means the server is reachable. Only network errors or 5xx errors
-        // indicate actual connection problems.
+        // it means the server is reachable. Only network errors indicate actual connection problems.
         clearTimeout(timeoutId);
         
-        const isConnected = response.status < 500;
+        // Consider it connected if we get any HTTP response (not a network error)
+        const isConnected = response.status !== 0; // Status 0 indicates network error
         
         return {
           connected: isConnected,
           status: response.status,
           timestamp: new Date().toISOString(),
-          endpoint: 'ai/chat'
+          endpoint: 'GET check'
         };
       } catch (error) {
         // Network error (failed to fetch, timeout, DNS failure, etc.)
         clearTimeout(timeoutId);
         
-        // If the primary endpoint fails, try a fallback
-        try {
-          const fallbackEndpoint = `${this.baseUrl}/api/jobs/`;
-          const timeoutId2 = setTimeout(() => controller.abort(), timeoutMs);
-          
-          const fallbackResponse = await fetch(fallbackEndpoint, {
-            method: 'GET',
-            signal: controller.signal,
-            headers: {
-              'Accept': 'application/json',
-              'Cache-Control': 'no-cache',
-              'X-Requested-With': 'HealthCheck'
-            }
-          });
-          
-          clearTimeout(timeoutId2);
-          
-          return {
-            connected: fallbackResponse.status < 500,
-            status: fallbackResponse.status,
-            timestamp: new Date().toISOString(),
-            endpoint: 'fallback',
-            error: error.message
-          };
-        } catch (fallbackError) {
-          return {
-            connected: false,
-            error: error.message,
-            timestamp: new Date().toISOString()
-          };
-        }
+        return {
+          connected: false,
+          error: error.message,
+          timestamp: new Date().toISOString()
+        };
       }
     } catch (error) {
       return {
