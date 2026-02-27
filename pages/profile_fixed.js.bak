@@ -278,7 +278,7 @@ export default function ProfilePage() {
             try {
               await api.createProfile(profileData);
               alert('Profile created successfully!');
-              
+
               // Update the auth context with the new profile picture and completion
               const updatedUser = {
                 ...authUser,
@@ -296,7 +296,7 @@ export default function ProfilePage() {
                 const retryProfile = await api.getUserProfile(authUser.id);
                 await api.updateUserProfile(authUser.id, profileData);
                 alert('Profile updated successfully!');
-                
+
                 // Update the auth context with the new profile picture and completion
                 const updatedUser = {
                   ...authUser,
@@ -970,7 +970,7 @@ export default function ProfilePage() {
           }
         }
       `}
-      <style jsx>{`
+        <style jsx>{`
         .personal-details-grid {
           display: grid;
           gap: 25px;
