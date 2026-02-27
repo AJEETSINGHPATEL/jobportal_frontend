@@ -578,7 +578,7 @@ video {
 
 @media (min-width: 1280px) {
   .container {
-    max-width: 1280px;
+    max-width: 1490px;
   }
 }
 
@@ -628,8 +628,8 @@ video {
   left: 0.75rem;
 }
 
-.left-6 {
-  left: 1.5rem;
+.right-6 {
+  right: 1.5rem;
 }
 
 .top-3 {
@@ -1643,4 +1643,17 @@ a {
   .md\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
+
+/* Force transparent backgrounds so 3D water shows through */
+body {
+  background: transparent !important;
+}
+
+.main {
+  background: transparent !important;
+}
+
+section {
+  background-color: transparent !important;
 }

@@ -1,12 +1,18 @@
-import { useEffect } from 'react';
 import '../styles/output.css';
-import '../styles/header-banner.css';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import dynamic from 'next/dynamic';
+
 import Chatbot from '../components/ai/Chatbot';
-import ConnectionStatus from '../components/ConnectionStatus';
-import ErrorBoundary from '../components/ErrorBoundary';
+
+// Initialize Firebase
+import '../utils/firebase';
+
+const ImmersiveBackground = dynamic(
+  () => import('../components/ImmersiveBackground'),
+  { ssr: false }
+);
 
 // Wrap the component with auth context
 function AppContent({ Component, pageProps }) {
@@ -17,42 +23,19 @@ function AppContent({ Component, pageProps }) {
   }
 
   return (
-    <ErrorBoundary>
-      <div>
-        <ConnectionStatus />
+    <div style={{ position: 'relative', minHeight: '100vh', zIndex: 0 }}>
+      <ImmersiveBackground />
+      <div style={{ position: 'relative', zIndex: 1 }}>
         <Navigation user={user} />
         <Component {...pageProps} user={user} />
         <Chatbot />
         <Footer />
       </div>
-    </ErrorBoundary>
+    </div>
   );
 }
 
 function MyApp({ Component, pageProps }) {
-  // Global error handlers
-  useEffect(() => {
-    // Handle unhandled promise rejections
-    const handleUnhandledRejection = (event) => {
-      console.error('Unhandled Promise Rejection:', event.reason);
-      // Prevent the default browser behavior
-      event.preventDefault();
-    };
-    
-    // Handle uncaught errors
-    const handleError = (event) => {
-      console.error('Uncaught Error:', event.error);
-    };
-    
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-    window.addEventListener('error', handleError);
-    
-    return () => {
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-      window.removeEventListener('error', handleError);
-    };
-  }, []);
-  
   return (
     <AuthProvider>
       <AppContent Component={Component} pageProps={pageProps} />

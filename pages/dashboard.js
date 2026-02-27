@@ -329,6 +329,14 @@ export default function Dashboard() {
         gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)'
       },
       {
+        id: 'knowledge-base',
+        title: 'Knowledge Base',
+        description: 'View insights from your previous chats',
+        icon: <FaChartBar />,
+        link: '/knowledge-base',
+        gradient: 'linear-gradient(135deg, #ec4899, #be185d)'
+      },
+      {
         id: 'interview-prep',
         title: 'Interview Prep',
         description: 'Practice with AI-generated questions',
@@ -342,341 +350,341 @@ export default function Dashboard() {
       <>
         {/* Welcome Section */}
         <div style={{
-          width:'100%'
+          width: '100%'
         }}>
 
-       
-        <div className="welcome-section" style={{ marginBottom: '2rem' }}>
-          <div className="welcome-card" style={{
-            background: 'white',
-            borderRadius: '16px',
-            padding: '2rem',
-            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem'
-          }}>
-            <div className="welcome-content">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1rem' }}>
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  border: '3px solid #3b82f6',
-                  flexShrink: 0
-                }}>
-                  {profile?.profilePicture ? (
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}${profile.profilePicture}`}
-                      alt="Profile"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://via.placeholder.com/80?text=User';
-                      }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: '100%',
-                      height: '100%',
-                      background: '#e5e7eb',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '2rem',
-                      color: '#9ca3af'
-                    }}>
-                      <FaUser />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h2 style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    color: '#1f2937',
-                    marginBottom: '0.25rem'
-                  }}>
-                    Welcome back, {user?.full_name || user?.email || 'Job Seeker'}!
-                  </h2>
-                  <p style={{
-                    color: '#4b5563',
-                    margin: 0
-                  }}>
-                    Ready to take the next step in your career journey?
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="welcome-stats" style={{
+
+          <div className="welcome-section" style={{ marginBottom: '2rem' }}>
+            <div className="welcome-card" style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '2rem',
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
               display: 'flex',
-              gap: '2rem',
-              marginTop: '1rem'
+              flexDirection: 'column',
+              gap: '1rem'
             }}>
-              <div className="stat-item" style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <FaBriefcase style={{ color: '#3b82f6', fontSize: '1.25rem' }} />
-                <div>
+              <div className="welcome-content">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1rem' }}>
                   <div style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '600',
-                    color: '#1f2937'
-                  }}>{stats.totalApplications}</div>
-                  <div style={{
-                    fontSize: '0.875rem',
-                    color: '#6b7280'
-                  }}>Applications</div>
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: '3px solid #3b82f6',
+                    flexShrink: 0
+                  }}>
+                    {profile?.profilePicture ? (
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}${profile.profilePicture}`}
+                        alt="Profile"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://via.placeholder.com/80?text=User';
+                        }}
+                      />
+                    ) : (
+                      <div style={{
+                        width: '100%',
+                        height: '100%',
+                        background: '#e5e7eb',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2rem',
+                        color: '#9ca3af'
+                      }}>
+                        <FaUser />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h2 style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 'bold',
+                      color: '#1f2937',
+                      marginBottom: '0.25rem'
+                    }}>
+                      Welcome back, {user?.full_name || user?.email || 'Job Seeker'}!
+                    </h2>
+                    <p style={{
+                      color: '#4b5563',
+                      margin: 0
+                    }}>
+                      Ready to take the next step in your career journey?
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="stat-item" style={{
+              <div className="welcome-stats" style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
+                gap: '2rem',
+                marginTop: '1rem'
               }}>
-                <FaHeart style={{ color: '#ef4444', fontSize: '1.25rem' }} />
-                <div>
-                  <div style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '600',
-                    color: '#1f2937'
-                  }}>{stats.savedJobs}</div>
-                  <div style={{
-                    fontSize: '0.875rem',
-                    color: '#6b7280'
-                  }}>Saved Jobs</div>
+                <div className="stat-item" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  <FaBriefcase style={{ color: '#3b82f6', fontSize: '1.25rem' }} />
+                  <div>
+                    <div style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      color: '#1f2937'
+                    }}>{stats.totalApplications}</div>
+                    <div style={{
+                      fontSize: '0.875rem',
+                      color: '#6b7280'
+                    }}>Applications</div>
+                  </div>
                 </div>
-              </div>
-              <div className="stat-item" style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <FaUser style={{ color: '#10b981', fontSize: '1.25rem' }} />
-                <div>
-                  <div style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '600',
-                    color: '#1f2937'
-                  }}>{stats.profileCompleteness}%</div>
-                  <div style={{
-                    fontSize: '0.875rem',
-                    color: '#6b7280'
-                  }}>Profile</div>
+                <div className="stat-item" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  <FaHeart style={{ color: '#ef4444', fontSize: '1.25rem' }} />
+                  <div>
+                    <div style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      color: '#1f2937'
+                    }}>{stats.savedJobs}</div>
+                    <div style={{
+                      fontSize: '0.875rem',
+                      color: '#6b7280'
+                    }}>Saved Jobs</div>
+                  </div>
+                </div>
+                <div className="stat-item" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  <FaUser style={{ color: '#10b981', fontSize: '1.25rem' }} />
+                  <div>
+                    <div style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      color: '#1f2937'
+                    }}>{stats.profileCompleteness}%</div>
+                    <div style={{
+                      fontSize: '0.875rem',
+                      color: '#6b7280'
+                    }}>Profile</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="stats-section" style={{ marginBottom: '2rem' }}>
-          <h2 style={{
-            fontSize: '1.25rem',
-            fontWeight: '600',
-            color: '#1f2937',
-            marginBottom: '1rem'
-          }}>Your Progress</h2>
-          <div className="stats-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.5rem'
-          }}>
-            {statCardsWithViews.map(card => (
-              <StatCard key={card.id} {...card} />
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="quick-actions-section" style={{ marginBottom: '2rem' }}>
-          <h2 style={{
-            fontSize: '1.25rem',
-            fontWeight: '600',
-            color: '#1f2937',
-            marginBottom: '1rem'
-          }}>Quick Actions</h2>
-          <div className="quick-actions-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.5rem'
-          }}>
-            {quickActions.map(action => (
-              <div
-                key={action.id}
-                className="quick-action-card"
-                onClick={() => router.push(action.link)}
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
-                }}
-              >
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  background: action.gradient,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  marginBottom: '1rem',
-                  transition: 'transform 0.3s ease'
-                }} className="action-icon">
-                  {action.icon}
-                </div>
-                <h3 style={{
-                  fontWeight: '600',
-                  color: '#1f2937',
-                  marginBottom: '0.5rem'
-                }}>{action.title}</h3>
-                <p style={{
-                  color: '#6b7280',
-                  fontSize: '0.875rem',
-                  marginBottom: '0.75rem'
-                }}>{action.description}</p>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#3b82f6',
-                  fontSize: '0.875rem',
-                  fontWeight: '500'
-                }}>
-                  Get Started <FaArrowRight style={{ marginLeft: '0.25rem', fontSize: '0.75rem' }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Recommended Jobs */}
-        <div className="recommended-section" style={{ marginBottom: '2rem' }}>
-          <div className="section-header" style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '1rem'
-          }}>
+          {/* Stats Cards */}
+          <div className="stats-section" style={{ marginBottom: '2rem' }}>
             <h2 style={{
               fontSize: '1.25rem',
               fontWeight: '600',
-              color: '#1f2937'
-            }}>Recommended for You</h2>
-            <button
-              style={{
-                color: '#3b82f6',
-                border: 'none',
-                background: 'none',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                cursor: 'pointer'
-              }}
-              onClick={() => router.push('/jobs')}
-            >
-              View All
-            </button>
+              color: '#1f2937',
+              marginBottom: '1rem'
+            }}>Your Progress</h2>
+            <div className="stats-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '1.5rem'
+            }}>
+              {statCardsWithViews.map(card => (
+                <StatCard key={card.id} {...card} />
+              ))}
+            </div>
           </div>
-          <div className="recommended-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '1.5rem'
-          }}>
-            {recommendedJobs.map(job => (
-              <div
-                key={job.id}
-                className="job-card"
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
-                }}
-                onClick={() => router.push(`/jobs/${job.id}`)}
-              >
-                <div className="job-header">
+
+          {/* Quick Actions */}
+          <div className="quick-actions-section" style={{ marginBottom: '2rem' }}>
+            <h2 style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: '#1f2937',
+              marginBottom: '1rem'
+            }}>Quick Actions</h2>
+            <div className="quick-actions-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '1.5rem'
+            }}>
+              {quickActions.map(action => (
+                <div
+                  key={action.id}
+                  className="quick-action-card"
+                  onClick={() => router.push(action.link)}
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
+                  }}
+                >
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    background: action.gradient,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    marginBottom: '1rem',
+                    transition: 'transform 0.3s ease'
+                  }} className="action-icon">
+                    {action.icon}
+                  </div>
                   <h3 style={{
                     fontWeight: '600',
                     color: '#1f2937',
-                    marginBottom: '0.25rem'
-                  }}>{job.title}</h3>
+                    marginBottom: '0.5rem'
+                  }}>{action.title}</h3>
                   <p style={{
                     color: '#6b7280',
                     fontSize: '0.875rem',
-                    marginBottom: '0.5rem'
-                  }}>{job.company} • {job.location}</p>
-                </div>
-                <div className="job-details">
-                  <div className="job-meta" style={{
+                    marginBottom: '0.75rem'
+                  }}>{action.description}</p>
+                  <div style={{
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    color: '#3b82f6',
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
                   }}>
-                    <span style={{
-                      color: '#047857',
-                      fontWeight: '500'
-                    }}>{job.salary}</span>
-                    <span style={{
-                      backgroundColor: '#f1f5f9',
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      fontSize: '0.8rem',
-                      color: '#6b7280'
-                    }}>{job.type}</span>
+                    Get Started <FaArrowRight style={{ marginLeft: '0.25rem', fontSize: '0.75rem' }} />
                   </div>
                 </div>
-                <button
-                  className="apply-btn"
+              ))}
+            </div>
+          </div>
+
+          {/* Recommended Jobs */}
+          <div className="recommended-section" style={{ marginBottom: '2rem' }}>
+            <div className="section-header" style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1rem'
+            }}>
+              <h2 style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                color: '#1f2937'
+              }}>Recommended for You</h2>
+              <button
+                style={{
+                  color: '#3b82f6',
+                  border: 'none',
+                  background: 'none',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  cursor: 'pointer'
+                }}
+                onClick={() => router.push('/jobs')}
+              >
+                View All
+              </button>
+            </div>
+            <div className="recommended-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '1.5rem'
+            }}>
+              {recommendedJobs.map(job => (
+                <div
+                  key={job.id}
+                  className="job-card"
                   style={{
-                    marginTop: '1rem',
-                    width: '100%',
-                    padding: '0.5rem 1rem',
-                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                    color: 'white',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
+                    backgroundColor: 'white',
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #1d4ed8, #1e40af)';
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.05)';
                   }}
+                  onClick={() => router.push(`/jobs/${job.id}`)}
                 >
-                  Apply Now
-                </button>
-              </div>
-            ))}
+                  <div className="job-header">
+                    <h3 style={{
+                      fontWeight: '600',
+                      color: '#1f2937',
+                      marginBottom: '0.25rem'
+                    }}>{job.title}</h3>
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '0.875rem',
+                      marginBottom: '0.5rem'
+                    }}>{job.company} • {job.location}</p>
+                  </div>
+                  <div className="job-details">
+                    <div className="job-meta" style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <span style={{
+                        color: '#047857',
+                        fontWeight: '500'
+                      }}>{job.salary}</span>
+                      <span style={{
+                        backgroundColor: '#f1f5f9',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        color: '#6b7280'
+                      }}>{job.type}</span>
+                    </div>
+                  </div>
+                  <button
+                    className="apply-btn"
+                    style={{
+                      marginTop: '1rem',
+                      width: '100%',
+                      padding: '0.5rem 1rem',
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      color: 'white',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #1d4ed8, #1e40af)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+                    }}
+                  >
+                    Apply Now
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-         </div>
       </>
     );
   };
@@ -785,7 +793,7 @@ export default function Dashboard() {
                 }}>
                   {authUser?.profilePicture ? (
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}${authUser.profilePicture}`}
+                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}${authUser.profilePicture}`}
                       alt="Profile"
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={(e) => {

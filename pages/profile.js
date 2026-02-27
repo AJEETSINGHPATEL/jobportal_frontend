@@ -114,7 +114,7 @@ export default function ProfilePage() {
 
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/profile/user/${userId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}/api/profile/user/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -266,7 +266,7 @@ export default function ProfilePage() {
           };
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/profile/user/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}/api/profile/user/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

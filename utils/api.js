@@ -1,7 +1,4 @@
-// Support Next.js environment variables
-// For Next.js builds, set NEXT_PUBLIC_API_URL in .env file
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 
-                     'https://jobportal-backend-2-i07w.onrender.com';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-ckuk.onrender.com';
 
 class ApiClient {
   constructor() {
@@ -12,35 +9,35 @@ class ApiClient {
   async request(endpoint, options = {}) {
     // Create a copy of options to avoid mutating the original
     const requestOptions = { ...options };
-    
+
     // Check if body is FormData, if so, don't set Content-Type header
     const isFormData = requestOptions.body instanceof FormData;
-    
+
     // Set default headers, but allow options.headers to override specific headers
     const defaultHeaders = {
       'Content-Type': 'application/json',
     };
-    
+
     // If body is FormData, don't set Content-Type to let browser set it with proper boundary
     if (isFormData) {
       delete defaultHeaders['Content-Type'];
     }
-    
+
     // Get token from localStorage for authenticated request
     const token = localStorage.getItem('token');
     if (token) {
       defaultHeaders['Authorization'] = `Bearer ${token}`;
     }
-    
+
     // Merge headers: default headers as base, then override with options.headers
     const mergedHeaders = {
       ...defaultHeaders,
       ...requestOptions.headers,
     };
-    
+
     // Remove headers from requestOptions since we're handling them separately
     delete requestOptions.headers;
-    
+
     const url = `${this.baseUrl}${endpoint}`;
     const config = {
       headers: mergedHeaders,
@@ -48,23 +45,7 @@ class ApiClient {
     };
 
     try {
-      // Determine timeout based on endpoint type
-      let timeoutMs = 15000; // 15 second default timeout
-      if (endpoint.includes('/api/ai/')) {
-        timeoutMs = 120000; // 2 minute timeout for AI requests
-      }
-      
-      // Add timeout for connection health check
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-      
-      const response = await fetch(url, {
-        ...config,
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
+      const response = await fetch(url, config);
       if (!response.ok) {
         // Parse error response to get detailed error message
         let errorData = {};
@@ -79,12 +60,12 @@ class ApiClient {
             errorData = { detail: `HTTP error! status: ${response.status}` };
           }
         }
-        
+
         console.log('API Error Response:', errorData);
-        
+
         // Handle Pydantic validation errors which come as objects
         let errorMessage = errorData.detail || `HTTP error! status: ${response.status}`;
-        
+
         // If the error detail is an object (like Pydantic validation errors), extract the message
         if (typeof errorMessage === 'object') {
           if (errorMessage.msg) {
@@ -99,13 +80,13 @@ class ApiClient {
             errorMessage = Object.values(errorMessage).join(', ') || 'Error occurred';
           }
         }
-        
+
         // Check if this is an authentication error (expired token, invalid token, etc.)
         if (response.status === 401 || response.status === 403) {
           // Clear the invalid token from localStorage
           localStorage.removeItem('token');
           localStorage.removeItem('user');
-          
+
           // Update error message to be more descriptive
           if (response.status === 401) {
             errorMessage = 'Session expired. Please log in again.';
@@ -113,7 +94,7 @@ class ApiClient {
         } else if (response.status === 422) {
           errorMessage = `Validation error: ${JSON.stringify(errorData)}`;
         }
-        
+
         const error = new Error(errorMessage);
         error.status = response.status;
         error.response = errorData;
@@ -122,28 +103,11 @@ class ApiClient {
       return await response.json();
     } catch (error) {
       console.error(`API request failed: ${error.message}`);
-      
-      // Enhanced error categorization
-      let errorMessage = 'An unexpected error occurred. Please try again.';
-      
-      if (error.name === 'AbortError') {
-        errorMessage = 'Request timeout. The server is taking too long to respond. Please check your internet connection.';
-      } else if (error instanceof TypeError && error.message.includes('fetch')) {
-        errorMessage = 'Network error. Unable to connect to the job portal service. Please check your internet connection and try again.';
-      } else if (error.message.includes('Failed to fetch')) {
-        errorMessage = 'Connection failed. Please verify your internet connection and try again.';
-      } else {
-        errorMessage = error.message || errorMessage;
+      // If it's a network error (e.g., backend not running), provide a more helpful message
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Network error. Please check if the backend server is running on port 8002.');
       }
-      
-      // Create enhanced error object with more context
-      const enhancedError = new Error(errorMessage);
-      enhancedError.originalError = error;
-      enhancedError.timestamp = new Date().toISOString();
-      enhancedError.endpoint = endpoint;
-      enhancedError.baseUrl = this.baseUrl;
-      
-      throw enhancedError;
+      throw error;
     }
   }
 
@@ -165,7 +129,7 @@ class ApiClient {
   async getCurrentUser() {
     return this.request('/api/auth/me');
   }
-  
+
   async getAllUsers() {
     return this.request('/api/admin/users');
   }
@@ -174,7 +138,7 @@ class ApiClient {
   async getJobs(filters = {}) {
     const queryParams = new URLSearchParams(filters).toString();
     const url = queryParams ? `/api/jobs/?${queryParams}` : '/api/jobs/';
-    
+
     return this.request(url);
   }
 
@@ -187,7 +151,7 @@ class ApiClient {
   async getJobById(jobId) {
     try {
       const response = await this.request(`/api/jobs/${jobId}`);
-      
+
       // Transform the response to match the required format
       return {
         success: true,
@@ -267,7 +231,7 @@ class ApiClient {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('user_id', userId);
-    
+
     // Don't include Authorization header in form data requests - it will be added automatically by the request method
     return this.request('/api/resume/upload', {
       method: 'POST',
@@ -345,14 +309,14 @@ class ApiClient {
   async getApplications(filters = {}) {
     const queryParams = new URLSearchParams(filters).toString();
     const url = queryParams ? `/api/applications/?${queryParams}` : '/api/applications/';
-    
+
     return this.request(url);
   }
 
   async applyForJob(applicationData) {
     console.log('Applying for job with data:', applicationData);
     console.log('Sending request to /api/applications/');
-    
+
     return this.request('/api/applications/', {
       method: 'POST',
       body: JSON.stringify(applicationData),
@@ -361,12 +325,12 @@ class ApiClient {
 
   async getApplicationById(applicationId) {
     console.log('Fetching application with ID:', applicationId);
-    
+
     // Validate that applicationId is not empty or undefined
     if (!applicationId) {
       throw new Error('Application ID is required');
     }
-    
+
     return this.request(`/api/applications/${applicationId}`);
   }
 
@@ -500,7 +464,7 @@ class ApiClient {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('job_description', jobDescription);
-    
+
     const response = await this.request('/api/ai/cover-letter-file', {
       method: 'POST',
       body: formData,
@@ -536,12 +500,12 @@ class ApiClient {
     });
     return response || { questions: [] };
   }
-  
+
   async generateInterviewQuestionsFromFile(jobDescription, file) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('job_description', jobDescription);
-    
+
     const response = await this.request('/api/ai/interview-questions-file', {
       method: 'POST',
       body: formData,
@@ -560,142 +524,24 @@ class ApiClient {
     });
     return response || { answer: 'No answer generated' };
   }
-  
-  // Test AI chat endpoint specifically
-  async testAIChatEndpoint(message = 'Hello') {
-    try {
-      // Check if we're in a browser environment
-      if (typeof window === 'undefined' || !window.fetch) {
-        throw new Error('Not running in browser environment');
-      }
-      
-      // For production environments, we may need to handle longer cold starts
-      const timeoutMs = process.env.NODE_ENV === 'production' ? 60000 : 30000; // 60 seconds for prod, 30 for dev
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-      
-      const response = await fetch(`${this.baseUrl}/api/ai/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: JSON.stringify({
-          message: message,
-          history: [{role: 'user', content: message}]
-        }),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        // Try to get error details from response
-        let errorDetails = `HTTP error! status: ${response.status}`;
-        try {
-          const errorResponse = await response.json();
-          errorDetails += `, details: ${JSON.stringify(errorResponse)}`;
-        } catch (parseError) {
-          // If we can't parse the error response, use the status text
-          errorDetails += `, statusText: ${response.statusText}`;
-        }
-        throw new Error(errorDetails);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('AI Chat endpoint test failed:', error);
-      // Re-throw the error with additional context
-      if (error.name === 'AbortError') {
-        throw new Error('Request timeout: The server took too long to respond. This may be due to a cold start on the free tier backend.');
-      }
-      throw error;
-    }
-  }
-  
+
   // Employer dashboard endpoints
   async getEmployerDashboardStats() {
     return this.request('/api/employer/dashboard/stats');
   }
-  
+
   async getEmployerJobs() {
     return this.request('/api/employer/jobs');
   }
-  
+
   async getEmployerApplications() {
     return this.request('/api/employer/applications');
   }
-  
+
   async getEmployerActivity() {
     return this.request('/api/employer/activity');
-  }
-  
-  // Connection health check method
-  async checkConnection() {
-    try {
-      // Check if we're in a browser environment
-      if (typeof window === 'undefined' || !window.fetch) {
-        return {
-          connected: false,
-          error: 'Not running in browser environment',
-          timestamp: new Date().toISOString()
-        };
-      }
-      
-      // Use longer timeout for production environments due to cold starts
-      const timeoutMs = process.env.NODE_ENV === 'production' ? 30000 : 15000;
-      const controller = new AbortController(); 
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs); // Timeout for health check
-      
-      // Try a simple GET request to test the endpoint (avoids potential CORS issues with POST to AI endpoint)
-      const testEndpoint = `${this.baseUrl}/api/jobs/`;
-      
-      try {
-        const response = await fetch(testEndpoint, {
-          method: 'GET',
-          signal: controller.signal,
-          headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'HealthCheck'  // Custom header to identify health check requests
-          }
-        });
-        
-        // If we receive any response (even error responses like 401, 404),
-        // it means the server is reachable. Only network errors indicate actual connection problems.
-        clearTimeout(timeoutId);
-        
-        // Consider it connected if we get any HTTP response (not a network error)
-        const isConnected = response.status !== 0; // Status 0 indicates network error
-        
-        return {
-          connected: isConnected,
-          status: response.status,
-          timestamp: new Date().toISOString(),
-          endpoint: 'GET check'
-        };
-      } catch (error) {
-        // Network error (failed to fetch, timeout, DNS failure, etc.)
-        clearTimeout(timeoutId);
-        
-        return {
-          connected: false,
-          error: error.message,
-          timestamp: new Date().toISOString()
-        };
-      }
-    } catch (error) {
-      return {
-        connected: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
-      };
-    }
   }
 }
 
 // Export singleton instance
 export const api = new ApiClient();
-
-export default api;

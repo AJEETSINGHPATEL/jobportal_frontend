@@ -137,7 +137,7 @@ export default function PersonalDetailsForm({ initialData, onSave }) {
         const formDataUpload = new FormData();
         formDataUpload.append('file', formData.profilePictureFile);
         
-        const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-2-i07w.onrender.com'}/api/profile/upload-picture`, {
+        const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8002'}/api/profile/upload-picture`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`

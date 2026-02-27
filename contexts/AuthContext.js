@@ -16,26 +16,19 @@ export const AuthProvider = ({ children }) => {
   const [token, setTokenState] = useState(null); // Track token in state
   const [loading, setLoading] = useState(true);
 
-  // Function to get token from localStorage with SSR check
+  // Function to get token from localStorage
   const getToken = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
+    return localStorage.getItem('token');
   };
 
-  // Function to set token in both state and localStorage with SSR check
+  // Function to set token in both state and localStorage
   const setToken = (newToken) => {
-    if (typeof window !== 'undefined') {
-      if (newToken) {
-        localStorage.setItem('token', newToken);
-        setTokenState(newToken);
-      } else {
-        localStorage.removeItem('token');
-        setTokenState(null);
-      }
+    if (newToken) {
+      localStorage.setItem('token', newToken);
+      setTokenState(newToken);
     } else {
-      setTokenState(newToken || null);
+      localStorage.removeItem('token');
+      setTokenState(null);
     }
   };
 
@@ -53,16 +46,11 @@ export const AuthProvider = ({ children }) => {
             // Set user data from the API response
             setUser(userData);
             // Store user data in localStorage
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('user', JSON.stringify(userData));
-            }
+            localStorage.setItem('user', JSON.stringify(userData));
           } catch (apiError) {
             // If API call fails, try to get user from localStorage
             console.error('Error getting user from API:', apiError);
-            let userData = {};
-            if (typeof window !== 'undefined') {
-              userData = JSON.parse(localStorage.getItem('user') || '{}');
-            }
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
             if (Object.keys(userData).length > 0) {
               setUser(userData);
             }
@@ -71,9 +59,7 @@ export const AuthProvider = ({ children }) => {
           console.error('Error initializing auth:', error);
           // Clear invalid data if there's an error
           setToken(null);
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('user');
-          }
+          localStorage.removeItem('user');
           setUser(null);
         }
       }
@@ -86,18 +72,14 @@ export const AuthProvider = ({ children }) => {
   const login = async (userData, authToken) => {
     setToken(authToken);
     // Store the complete user object
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(userData));
-    }
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
   const logout = () => {
     setToken(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
@@ -106,9 +88,7 @@ export const AuthProvider = ({ children }) => {
     if (user) {
       const updatedUser = { ...user, profilePicture: pictureUrl };
       setUser(updatedUser);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-      }
+      localStorage.setItem('user', JSON.stringify(updatedUser));
     }
   };
 

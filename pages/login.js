@@ -58,7 +58,7 @@ export default function Login() {
         }
         setError(errorMessage);
       } else if (err.request) {
-        setError('Network error. Unable to connect to the job portal service. Please check your internet connection and try again.');
+        setError('Network error. Please check if the backend server is running on port 8002.');
       } else {
         setError('Invalid email or password');
       }

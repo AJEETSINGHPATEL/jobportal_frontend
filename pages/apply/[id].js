@@ -186,7 +186,7 @@ export default function ApplyJob({ user }) {
       console.error('Error uploading resume:', err);
       // Provide a more user-friendly error message
       if (err.message.includes('Failed to fetch')) {
-        setUploadError('Network error. Unable to connect to the job portal service. Please check your internet connection and try again.');
+        setUploadError('Unable to connect to the server. Please check if the backend is running on port 8002.');
       } else {
         setUploadError(err.message || 'Failed to upload resume');
       }
