@@ -129,8 +129,9 @@ export default function Chatbot() {
         setIsLoading(true);
 
         try {
-            const apiUrl = 'https://jobportal-backend-ckuk.onrender.com';
-            const res = await fetch(`${apiUrl}/api/ai/chat`, {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://jobportal-backend-ckuk.onrender.com';
+            const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
+            const res = await fetch(`${baseUrl}/api/ai/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
                 body: JSON.stringify({ message: msgContent, session_id: sessionId, history: messages.slice(-5).map(m => ({ role: m.role, content: m.content })) }),
