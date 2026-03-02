@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { api } from '../../../utils/api';
+import { api } from '../../utils/api';
 import { FaStar, FaBuilding, FaMapMarkerAlt, FaLink, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 export default function CompanyProfile() {
@@ -20,7 +20,7 @@ export default function CompanyProfile() {
       // For now, we'll use mock user data
       setUser({ id: 'mock_user_id', role: 'job_seeker' });
     }
-    
+
     if (id) {
       fetchCompanyData();
     }
@@ -30,7 +30,7 @@ export default function CompanyProfile() {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Fetch company data
       const companyResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/companies/${id}`);
       if (!companyResponse.ok) {
@@ -38,11 +38,11 @@ export default function CompanyProfile() {
       }
       const companyData = await companyResponse.json();
       setCompany(companyData);
-      
+
       // Fetch company reviews
       const reviewsData = await api.getCompanyReviews(id);
       setReviews(reviewsData);
-      
+
       // Fetch average ratings
       const avgRatings = await api.getCompanyAverageRatings(id);
       setAverageRatings(avgRatings);
@@ -97,9 +97,9 @@ export default function CompanyProfile() {
     const roundedRating = Math.round(rating);
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <FaStar 
-          key={i} 
-          className={i <= roundedRating ? 'star-filled' : 'star-empty'} 
+        <FaStar
+          key={i}
+          className={i <= roundedRating ? 'star-filled' : 'star-empty'}
         />
       );
     }
@@ -137,7 +137,7 @@ export default function CompanyProfile() {
             </div>
           </div>
         </div>
-        
+
         <div className="company-ratings">
           <div className="rating-summary">
             <div className="overall-rating">
@@ -204,7 +204,7 @@ export default function CompanyProfile() {
             <button className="btn btn-primary">Write Review</button>
           )}
         </div>
-        
+
         {reviews.length === 0 ? (
           <div className="no-reviews">
             <p>No reviews yet. Be the first to review this company.</p>
@@ -224,7 +224,7 @@ export default function CompanyProfile() {
                     {renderStars(review.rating_work_culture)}
                   </div>
                 </div>
-                
+
                 <div className="review-ratings">
                   <div className="sub-rating">
                     <span>Work Culture: </span>
@@ -243,18 +243,18 @@ export default function CompanyProfile() {
                     {renderStars(review.rating_management)}
                   </div>
                 </div>
-                
+
                 <div className="review-content">
                   <div className="pros-section">
                     <h4>Pros</h4>
                     <p>{review.pros}</p>
                   </div>
-                  
+
                   <div className="cons-section">
                     <h4>Cons</h4>
                     <p>{review.cons}</p>
                   </div>
-                  
+
                   {review.interview_experience && (
                     <div className="interview-section">
                       <h4>Interview Experience</h4>

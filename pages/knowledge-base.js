@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../utils/api';
 import { FaChartBar, FaRobot, FaSearch, FaHistory, FaLightbulb, FaArrowLeft, FaComments, FaCalendar, FaEllipsisV } from 'react-icons/fa';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 
 export default function KnowledgeBase() {
     const router = useRouter();
@@ -49,7 +49,7 @@ export default function KnowledgeBase() {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
-            <Navbar />
+            <Navigation user={user} />
 
             <main className="flex-grow container mx-auto px-4 py-8">
                 <div className="flex items-center gap-4 mb-8">
