@@ -243,11 +243,16 @@ export default function Chatbot() {
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={toggleVoiceMode} className="hover:bg-white/20 p-1.5 rounded-full transition-colors" title="Switch to Voice">
-                                <FaMicrophone size={16} />
+                            <button
+                                onClick={toggleVoiceMode}
+                                className={`hover:bg-white/20 p-1.5 rounded-full transition-all ${isVoiceSupported ? 'text-white' : 'text-white/30 cursor-not-allowed'}`}
+                                title={isVoiceSupported ? "Start Voice Call" : "Voice not supported"}
+                                disabled={!isVoiceSupported}
+                            >
+                                <FaMicrophone size={20} className={isListening ? 'animate-pulse text-green-400' : ''} />
                             </button>
                             <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1.5 rounded-full transition-colors">
-                                <FaTimes size={18} />
+                                <FaTimes size={20} />
                             </button>
                         </div>
                     </div>
@@ -257,8 +262,8 @@ export default function Chatbot() {
                         {messages.map((msg, idx) => (
                             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] rounded-2xl p-3 shadow-sm text-sm ${msg.role === 'user'
-                                        ? 'bg-blue-600 text-white rounded-br-none px-4'
-                                        : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none px-4'
+                                    ? 'bg-blue-600 text-white rounded-br-none px-4'
+                                    : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none px-4'
                                     }`}>
                                     {msg.content}
                                 </div>
